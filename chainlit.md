@@ -1,14 +1,24 @@
-# Welcome to Chainlit! 🚀🤖
+# 空管智能助手
 
-Hi there, Developer! 👋 We're excited to have you on board. Chainlit is a powerful tool designed to help you prototype, debug and share applications built on top of LLMs.
+欢迎使用空管智能助手（ATM Intelligence Suite），基于大模型 + 知识库 + 深度学习，为民航空管业务提供智能辅助。
 
-## Useful Links 🔗
+## 我能做什么
 
-- **Documentation:** Get started with our comprehensive [Chainlit Documentation](https://docs.chainlit.io) 📚
-- **Discord Community:** Join our friendly [Chainlit Discord](https://discord.gg/k73SQ3FyUh) to ask questions, share your projects, and connect with other developers! 💬
+- **航班查询** — 查各机场航班时刻、延误情况、状态分布
+- **法规检索** — 检索 CCAR-71/91/93/121 等空管法规
+- **流量分析** — 查看机场历史逐小时流量、峰值低谷
+- **流量预测** — LSTM 模型预测未来 24 小时流量趋势
+- **异常检测** — Autoencoder 检测流量异常波动
 
-We can't wait to see what you create with Chainlit! Happy coding! 💻😊
+## 试试这些
 
-## Welcome screen
+- 查询成都双流今天有多少航班
+- ZUUU 最近 48 小时流量怎么样
+- 预测成都双流未来 24 小时流量
+- ZUUU 流量是否异常
+- 什么是 A 类空域
+- 重型机和中型机的尾流间隔是多少
 
-To modify the welcome screen, edit the `chainlit.md` file at the root of your project. If you do not want a welcome screen, just leave this file empty.
+## 技术栈
+
+通义千问 (DashScope) · LangGraph Agent · Chroma RAG · PyTorch LSTM/Autoencoder · Chainlit 2.11

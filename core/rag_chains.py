@@ -73,7 +73,6 @@ _rag_chain = None
 
 
 def _get_rag_chain():
-    global _rag_chain
     if _rag_chain is None:
         _rag_chain = create_rag_chain()
     return _rag_chain

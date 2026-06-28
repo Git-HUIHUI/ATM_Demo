@@ -84,9 +84,10 @@ ATM_Demo/
 | 路径 | 说明 |
 |------|------|
 | `/docs` | Swagger UI |
-| `/rag/playground` | RAG 问答交互 |
 | `/agent/playground` | Agent 对话交互 |
-| `/dl/predict` | 流量预测接口 |
+| `/dl/predict` | 流量预测 (POST) |
+| `/dl/anomaly` | 异常检测 (POST) |
+| `/health` | 健康检查 |
 
 ## 注意事项
 

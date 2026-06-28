@@ -160,7 +160,7 @@ LLM 判断是否需要工具
 
 ### 4.2 当前状态
 
-Agent 模式，5 个工具齐全，支持多轮对话记忆。RAG 检索通过 `search_regulations` 工具调用，已内嵌到 Agent 中，不需要独立模式。
+Agent 模式，5 工具齐全齐全，支持多轮对话记忆。RAG 检索通过 `search_regulations` 工具调用，已内嵌到 Agent 中，不需要独立模式。
 
 ### 4.3 启动
 
@@ -198,14 +198,16 @@ curl -X POST http://localhost:8000/dl/anomaly \
 ---
    (file_path: D:\ATM_Demo\docs\module_design.md)
 
-### 5.1 数据概览
+## 6. 数据模块 (core/config.py + core/data_generator.py)
+
+### 6.1 数据概览
 
 | 数据 | 大小 | 字段 |
 |------|------|------|
 | `flights.csv` | 10,000 行 | flight_no, airline, aircraft, dep/arr, scheduled, status, delay |
 | `flow_history.csv` | 43,800 行 (5机场×365天×24h) | timestamp, airport, airport_name, flow |
 
-### 5.2 数据用途
+### 6.2 数据用途
 
 | 数据 | 用途 |
 |------|------|
@@ -216,7 +218,7 @@ curl -X POST http://localhost:8000/dl/anomaly \
 其余 4 个机场（ZBAA、ZSPD、ZGGG、ZUUU2）仅用于工具查询，不参与训练。
 详见 §3.3。
 
-### 5.3 CAAC 校准参数
+### 6.3 CAAC 校准参数
 
 所有关键数字来自 CAAC 2024 公报：
 
@@ -226,7 +228,7 @@ curl -X POST http://localhost:8000/dl/anomaly \
 - 容量: ZUUU 48/h, ZUUU2 70/h, ZSPD 72/h
 - 起降日内双峰分布: 早高峰 8-11点, 晚高峰 17-20点
 
-### 5.4 bugfix
+### 6.4 bugfix
 
 | 问题 | 修复 |
 |------|------|

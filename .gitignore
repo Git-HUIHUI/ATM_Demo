@@ -1,0 +1,8 @@
+__pycache__
+.env
+chroma_db/
+models/*.pt
+.claude/
+.chainlit/translations/
+data/flights.csv
+data/flow_history.csv

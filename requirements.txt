@@ -1,0 +1,40 @@
+# ============================================
+# 空管智能助手 (ATM Intelligence Suite)
+# Python 依赖清单
+# ============================================
+
+# --- LLM / RAG / Agent ---
+langchain>=1.3.0
+langchain-openai>=1.3.0
+langchain-core>=1.4.0
+langchain-community>=0.4.0
+langchain-chroma>=1.1.0
+langchain-huggingface>=1.2.0
+langchain-text-splitters>=1.1.0
+langgraph>=1.2.0
+langgraph-prebuilt>=1.1.0
+chromadb>=1.5.0
+sentence-transformers>=5.0.0
+
+# --- Chainlit 前端 ---
+chainlit>=2.0.0
+
+# --- LangServe ---
+langserve>=0.3.0
+uvicorn>=0.23.0
+
+# --- 深度学习 ---
+torch>=2.0.0
+torchvision>=0.15.0
+
+# --- 数据处理 ---
+pandas>=3.0.0
+numpy>=2.0.0
+scikit-learn>=1.3.0
+
+# --- 可视化 ---
+matplotlib>=3.8.0
+plotly>=5.18.0
+
+# --- 工具 ---
+python-dotenv>=1.0.0

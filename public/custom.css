@@ -1,0 +1,207 @@
+/* ATM_Demo - DeepSeek 风格主题 */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --background: 0 0% 100% !important;
+  --foreground: 220 15% 20% !important;
+  --card: 0 0% 100% !important;
+  --card-foreground: 220 15% 20% !important;
+  --popover: 0 0% 100% !important;
+  --popover-foreground: 220 15% 20% !important;
+  --primary: 220 15% 20% !important;
+  --primary-foreground: 0 0% 100% !important;
+  --secondary: 220 14% 96% !important;
+  --secondary-foreground: 220 15% 20% !important;
+  --muted: 220 14% 96% !important;
+  --muted-foreground: 220 10% 55% !important;
+  --accent: 220 14% 96% !important;
+  --accent-foreground: 220 15% 20% !important;
+  --destructive: 0 84% 60% !important;
+  --destructive-foreground: 0 0% 100% !important;
+  --border: 220 13% 91% !important;
+  --input: 220 13% 91% !important;
+  --ring: 220 15% 20% !important;
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: 220 15% 10% !important;
+  --foreground: 220 10% 92% !important;
+  --card: 220 15% 13% !important;
+  --card-foreground: 220 10% 92% !important;
+  --popover: 220 15% 13% !important;
+  --popover-foreground: 220 10% 92% !important;
+  --primary: 220 10% 92% !important;
+  --primary-foreground: 220 15% 10% !important;
+  --secondary: 220 14% 18% !important;
+  --secondary-foreground: 220 10% 92% !important;
+  --muted: 220 14% 16% !important;
+  --muted-foreground: 220 10% 55% !important;
+  --accent: 220 14% 18% !important;
+  --accent-foreground: 220 10% 92% !important;
+  --destructive: 0 70% 50% !important;
+  --destructive-foreground: 0 0% 100% !important;
+  --border: 220 14% 20% !important;
+  --input: 220 14% 20% !important;
+  --ring: 220 10% 60% !important;
+  --radius: 0.75rem;
+}
+
+/* Fonts */
+body, div, p, span, a, button, input, textarea, li, h1, h2, h3, h4, th, td, label {
+  font-family: 'Inter', -apple-system, 'PingFang SC', system-ui, sans-serif !important;
+}
+code, pre {
+  font-family: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', monospace !important;
+  font-size: 0.9em !important;
+}
+
+/* Watermark */
+.watermark { display: none !important; }
+
+/* Composer — clean, minimal */
+[class*="rounded-3xl"][class*="p-3"] {
+  border-radius: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  border-top: 1px solid hsl(var(--border)) !important;
+  padding: 12px 16px !important;
+}
+
+/* Textarea parent wrapper */
+[class*="relative"][class*="w-full"]:has(textarea#chat-input) {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  width: auto !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Textarea */
+[id="chat-input"] {
+  padding: 10px 14px !important;
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  border-radius: 8px !important;
+  background: hsl(var(--secondary)) !important;
+  border: 1px solid transparent !important;
+  min-height: 44px !important;
+  height: auto !important;
+  caret-color: hsl(var(--foreground)) !important;
+  font-size: 0.9375rem !important;
+  line-height: 1.5 !important;
+  resize: none !important;
+  box-sizing: border-box !important;
+}
+
+[id="chat-input"]:focus, textarea:focus {
+  border-color: hsl(var(--ring)) !important;
+  background: hsl(var(--card)) !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Send button — subtle */
+button[class*="rounded-full"][class*="bg-primary"] {
+  background: transparent !important;
+  color: hsl(var(--foreground)) !important;
+  border-radius: 9999px !important;
+  width: 34px !important;
+  height: 34px !important;
+  flex-shrink: 0 !important;
+  opacity: 0.6 !important;
+  transition: opacity 150ms ease !important;
+}
+button[class*="rounded-full"][class*="bg-primary"]:hover {
+  opacity: 1 !important;
+  background: hsl(var(--secondary)) !important;
+}
+
+/* Message bubbles */
+[class*="flex-col"][class*="w-full"] > [class*="flex"] > [class*="flex"] {
+  padding: 0 !important;
+}
+
+/* AI messages */
+[class*="ai-message"] {
+  background: transparent !important;
+  padding: 0 !important;
+}
+
+/* Avatar */
+[class*="shrink-0"]:has(img), [class*="shrink-0"] img {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+/* Links */
+[class*="prose"] a {
+  color: hsl(var(--foreground)) !important;
+  text-decoration: underline !important;
+  text-underline-offset: 2px !important;
+}
+[class*="prose"] a:hover { opacity: 0.7 !important; }
+
+/* Headers */
+[class*="prose"] h2 {
+  font-size: 1.15rem !important;
+  font-weight: 600 !important;
+  border: none !important;
+  padding-bottom: 0 !important;
+}
+[class*="prose"] h3 {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+}
+
+/* Tables */
+[class*="prose"] table {
+  font-size: 0.8125rem !important;
+  border-collapse: collapse !important;
+  background: hsl(var(--secondary)) !important;
+  border-radius: 8px !important;
+}
+[class*="prose"] th {
+  font-weight: 500 !important;
+  padding: 6px 10px !important;
+  border-bottom: 1px solid hsl(var(--border)) !important;
+}
+[class*="prose"] td {
+  padding: 5px 10px !important;
+  border-bottom: 1px solid hsl(var(--border)) !important;
+}
+
+/* Code blocks */
+[class*="prose"] pre {
+  background: hsl(var(--secondary)) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 16px !important;
+}
+[class*="prose"] code {
+  background: hsl(var(--secondary)) !important;
+  border-radius: 4px !important;
+  padding: 2px 6px !important;
+  font-size: 0.85em !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 2px; }
+
+/* Focus */
+:focus-visible {
+  outline: 1px solid hsl(var(--ring)) !important;
+  outline-offset: 0 !important;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -215,7 +215,6 @@ curl -X POST http://localhost:8000/dl/anomaly \
 ```
 
 ---
-   (file_path: D:\ATM_Demo\docs\module_design.md)
 
 ## 6. 数据模块 (core/config.py + core/data_generator.py)
 

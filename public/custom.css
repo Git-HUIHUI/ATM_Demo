@@ -1,7 +1,5 @@
 /* ATM_Demo - DeepSeek 风格主题 */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
-
 :root {
   --background: 0 0% 100% !important;
   --foreground: 220 15% 20% !important;
@@ -49,16 +47,16 @@
 }
 
 /* Fonts */
-body, div, p, span, a, button, input, textarea, li, h1, h2, h3, h4, th, td, label {
-  font-family: 'Inter', -apple-system, 'PingFang SC', system-ui, sans-serif !important;
+body {
+  font-family: 'Inter', -apple-system, 'PingFang SC', system-ui, sans-serif;
 }
 code, pre {
-  font-family: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', monospace !important;
-  font-size: 0.9em !important;
+  font-family: 'SF Mono', 'Cascadia Code', 'JetBrains Mono', monospace;
+  font-size: 0.9em;
 }
 
 /* Watermark */
-.watermark { display: none !important; }
+.watermark { display: none; }
 
 /* Composer — clean, minimal */
 [class*="rounded-3xl"][class*="p-3"] {

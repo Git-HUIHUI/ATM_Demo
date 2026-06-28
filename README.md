@@ -10,7 +10,7 @@
 | RAG 框架 | LangChain + Chroma + 本地 Embedding (text2vec-base-chinese) |
 | Agent 框架 | LangGraph (ReAct, 工具调用) |
 | 深度学习 | PyTorch (LSTM, Autoencoder) |
-| 后端框架 | FastAPI + LangServe |
+| 后端框架 | Chainlit + LangGraph (可选: FastAPI API 模块) |
 | 前端框架 | Chainlit 2.11 (LLM 原生对话 UI) |
 | 环境管理 | Conda (atm_demo) |
 

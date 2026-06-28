@@ -52,13 +52,15 @@ ATM_Demo/
 │   ├── llm.py                  # LLM / Embedding 工厂
 │   ├── data_generator.py       # 合成数据生成 (CAAC 校准)
 │   ├── rag_chains.py           # RAG 检索问答链
-│   ├── agent_graph.py          # LangGraph Agent (3 工具)
+│   ├── agent_graph.py          # LangGraph Agent (5 工具)
 │   ├── dl_models.py            # LSTM + Autoencoder 模型定义
 │   └── train.py                # 模型训练脚本
 ├── ui/
 │   └── app.py                  # Chainlit 前端
+├── public/
+│   └── custom.css               # DeepSeek 风格主题 (Chainlit 静态文件)
 ├── .chainlit/
-│   └── config.toml
+│   └── config.toml              # Chainlit 配置 (主题/CoT/custom_css)
 ├── data/
 │   ├── regulations/            # 6 篇 CCAR 法规 .md
 │   ├── flights.csv             # 航班时刻表 (10K 条, 3 个月)

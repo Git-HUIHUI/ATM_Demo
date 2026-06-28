@@ -146,7 +146,7 @@ LLM 判断是否需要工具
 
 ---
 
-## 4. UI 模块 (`ui/app.py`)
+## 4. UI 模块 (`ui/app.py` + `public/custom.css`)
 
 ### 4.1 当前实现 (Chainlit 2.11)
 
@@ -160,9 +160,28 @@ LLM 判断是否需要工具
 
 ### 4.2 当前状态
 
-Agent 模式，5 工具齐全齐全，支持多轮对话记忆。RAG 检索通过 `search_regulations` 工具调用，已内嵌到 Agent 中，不需要独立模式。
+Agent 模式，5 工具齐全，支持多轮对话记忆。RAG 检索通过 `search_regulations` 工具调用，已内嵌到 Agent 中，不需要独立模式。
 
-### 4.3 启动
+### 4.3 主题配置
+
+Chainlit 2.11 通过 `custom_css` 挂载自定义主题，CSS 文件放在项目根 `public/` 目录。
+
+```
+public/custom.css        ← DeepSeek 风格主题（唯一的主题文件）
+.chainlit/config.toml    ← custom_css = "/public/custom.css"
+```
+
+| 特性 | 实现 |
+|------|------|
+| 浅色主题 | `:root` — 白底灰字，蓝灰色调 |
+| 深色主题 | `.dark` — 深灰底白字，自动切换 |
+| 字体 | Inter (正文) + SF Mono/Cascadia Code (代码) |
+| 输入框 | 圆角 8px，透明背景，focus 时亮色边框 |
+| 发送按钮 | 圆形透明，hover 半透明底色 |
+
+`public/` 是 Chainlit 唯一识别的前端静态文件目录，项目内不存在 `ui/public/` 或其他备用路径。
+
+### 4.4 启动
 
 ```bash
 chainlit run ui/app.py --port 8000

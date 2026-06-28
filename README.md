@@ -38,7 +38,13 @@ python -c "import sys; sys.path.insert(0,'.'); from core.rag_chains import build
 python core/train.py
 
 # 4. 启动 Chainlit 应用
-chainlit run ui/app.py
+chainlit run ui/app.py --port 8000
+
+# 浏览器打开 http://localhost:8000
+
+# 如果从非项目目录启动，需指定项目根:
+#   set CHAINLIT_APP_ROOT=D:\ATM_Demo
+#   再运行 chainlit run ui/app.py --port 8000
 ```
 
 ## 项目结构

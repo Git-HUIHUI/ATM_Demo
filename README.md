@@ -27,12 +27,14 @@ DASHSCOPE_API_KEY=sk-xxxxxxxxxxxxx
 
 ## 快速启动
 
+> 数据生成、RAG 构建、模型训练只需执行一次，之后每次只需第 4 步启动。
+
 ```bash
 # 1. 生成模拟数据（CAAC 2024 公报校准）
 python core/data_generator.py
 
 # 2. 构建 RAG 知识库（向量化 + Chroma 持久化）
-python -c "import sys; sys.path.insert(0,'.'); from core.rag_chains import build_vectorstore; build_vectorstore(); print('Done')"
+python -c "from core.rag_chains import build_vectorstore; build_vectorstore()"
 
 # 3. 训练深度学习模型
 python core/train.py
@@ -41,10 +43,6 @@ python core/train.py
 chainlit run ui/app.py --port 8000
 
 # 浏览器打开 http://localhost:8000
-
-# 如果从非项目目录启动，需指定项目根:
-#   set CHAINLIT_APP_ROOT=D:\ATM_Demo
-#   再运行 chainlit run ui/app.py --port 8000
 ```
 
 ## 项目结构

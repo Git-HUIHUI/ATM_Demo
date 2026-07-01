@@ -1,13 +1,32 @@
 # API 接口设计
 
-## FastAPI 端点 (app/server.py)
+> 最后更新: 2026-06-29
 
-### 1. Agent 对话 `/agent`
+`app/server.py` 是可选独立模块，将 Agent 和 DL 模型包装为 REST API。Chainlit 不依赖它启动。
 
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| POST | `/agent/stream` | Agent 流式对话 |
-| POST | `/agent/invoke` | Agent 同步调用 |
+## 端点总览
+
+| 方法 | 路径 | 说明 | 模块 |
+|------|------|------|------|
+| GET | `/health` | 健康检查 | 运维 |
+| POST | `/agent/stream` | Agent 流式对话 | Agent |
+| POST | `/dl/predict` | LSTM 预测未来流量 | DL |
+| POST | `/dl/anomaly` | Autoencoder 异常检测 | DL |
+
+## 1. 健康检查 `GET /health`
+
+响应:
+```json
+{
+  "status": "ok",
+  "chroma_ok": true,
+  "flights_records": 10000,
+  "flow_records": 43800,
+  "model_loaded": true
+}
+```
+
+## 2. Agent 对话 `POST /agent/stream`
 
 请求体:
 ```json
@@ -20,16 +39,9 @@
 }
 ```
 
-响应 (流式 SSE):
-```
-event: metadata / event: updates / event: end
-```
+响应: SSE 流 (event: metadata / updates / end)
 
-### 2. 流量预测 `/dl/predict`
-
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| POST | `/dl/predict` | LSTM 预测未来流量 |
+## 3. LSTM 流量预测 `POST /dl/predict`
 
 请求体:
 ```json
@@ -44,16 +56,12 @@ event: metadata / event: updates / event: end
 {
   "airport": "ZUUU",
   "airport_name": "成都双流国际机场",
-  "predictions": [22.1, 18.3, 14.7, ...],
+  "predictions": [22.1, 18.3, 14.7, "...24个值"],
   "hours": 24
 }
 ```
 
-### 3. 异常检测 `/dl/anomaly`
-
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| POST | `/dl/anomaly` | Autoencoder 异常检测 |
+## 4. Autoencoder 异常检测 `POST /dl/anomaly`
 
 请求体:
 ```json
@@ -73,39 +81,12 @@ event: metadata / event: updates / event: end
 }
 ```
 
-### 4. 健康检查 `/health`
-
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/health` | 健康检查 |
-
-响应:
-```json
-{
-  "status": "ok",
-  "chroma_ok": true,
-  "flights_records": 10000,
-  "flow_records": 43800,
-  "model_loaded": true
-}
-```
-
-## Chainlit 前端 (ui/app.py)
-
-Chainlit 通过 `astream_events` 流式消费 Agent 输出：
-
-```python
-@cl.on_chat_start  → 创建 Agent, 发欢迎消息
-@cl.on_message     → history.append → agent.astream_events
-                   → on_chat_model_stream: 流式文本
-                   → on_tool_start: 展示工具调用
-                   → on_tool_end: 展示工具输出摘要
-```
+判定逻辑: `abs(z_score) > 2` → 异常（双向，偏高/偏低均可检测）
 
 ## 错误码
 
 | 状态码 | 说明 |
 |--------|------|
-| 400 | 参数校验失败 |
+| 400 | 参数校验失败（机场不存在/数据不足24小时） |
 | 500 | 内部错误 (LLM超时/模型未加载/数据文件缺失) |
 | 503 | 服务不可用 (API Key未配置) |

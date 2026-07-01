@@ -1,6 +1,20 @@
 # 模块详细设计
 
-> 最后更新: 2026-06-28
+> 最后更新: 2026-06-29
+
+## 0. 项目定位
+
+**用户**: 空管管制员、流量管理人员。决策窗口几十秒，信息分散在多个系统。
+
+本系统是空管员的**第二双眼睛 + 决策外脑**，覆盖完整业务闭环：
+
+```
+检测异常 → 评估影响 → 推荐处置措施 → 生成通知清单 → 事后复盘
+```
+
+V1 实现了检测层（5 工具 Agent + DL 模型）。V2 补齐完整闭环，详见 `V2_plan.md`。
+
+---
 
 ## 1. RAG 模块 (`core/rag_chains.py`)
 
@@ -36,7 +50,7 @@ LLM (qwen-plus, DashScope) → 流式输出回答
 
 | 决策 | 内容 | 原因 |
 |------|------|------|
-| Embedding 换成本地模型 | `text2vec-base-chinese` | 避免 DashScope API 401 认证失败；Embedding 不需要 GPU |
+| Embedding 换成本地模型 | `text2vec-base-chinese` | 避免 DashScope API 401 认证失败；Embedding 不需要 GPU；专为中文优化 |
 | import 路径修复 | `langchain.chains` → `langchain_classic.chains` | LangChain 1.3+ 将 chains 移入 classic 命名空间 |
 | sys.path 注入 | `sys.path.insert(0, parent_dir)` | Chainlit 启动时找不到 core 模块 |
 
@@ -67,6 +81,8 @@ LLM 判断是否需要工具
 最终回答
 ```
 
+Agent 与 LLM 是双向循环关系——每次循环把 SYSTEM_PROMPT + 对话历史 + 工具返回结果发给 LLM，LLM 判断下一步行动。
+
 ### 2.2 工具清单
 
 | 工具 | 功能 | 数据源 | 状态 |
@@ -89,6 +105,10 @@ LLM 判断是否需要工具
 
 ## 3. 深度学习模块 (`core/dl_models.py` + `core/train.py`)
 
+### 3.0 设计考量
+
+**核心问题**：计划时刻表提前一周可知，气象预报和军航通告也有前置渠道。LSTM 用 24h 历史数据做纯时序外推，边际价值有限。Autoencoder 做的是模式识别而非预测——不管前置信息是什么，最终都会反映在实际流量里，偏离正常模式就报警。
+
 ### 3.1 LSTM 流量预测
 
 ```
@@ -106,6 +126,8 @@ LLM 判断是否需要工具
 | 可用机场 | ZUUU, ZBAA, ZSPD, ZGGG, ZUUU2（5 个，仅 ZUUU 参与训练） |
 | 最新 Loss | 4.81 (Epoch 50) |
 | 模型路径 | `models/lstm_flow_model.pt` |
+
+**定位**：当前为纯时序外推，demo 阶段展示用途。改进方向如下。
 
 ### 3.2 Autoencoder 异常检测
 
@@ -130,10 +152,11 @@ LLM 判断是否需要工具
 | 存储格式 | `{"model": state_dict, "mean": float, "std": float}` |
 | 模型路径 | `models/autoencoder_model.pt` |
 
+**定位**：核心价值模块。不管有多少前置信息（计划表、气象、军航通告），所有因素最终都会体现在实际流量里。Autoencoder 不关心"为什么异常"，只检测"当前模式与历史正常模式是否偏离"——这是规则引擎和人工都难以实时做到的。
+
 ### 3.3 已知限制
 
-**单机场训练**: 两个 DL 模型都只用 ZUUU 数据训练，原因是 ZUUU 数据量最大、最稳定。
-对其他机场推理时，Autoencoder 会将不同流量模式误判为异常：
+**单机场训练**: 两个 DL 模型都只用 ZUUU 数据训练。对其他机场推理时，Autoencoder 会将不同流量模式误判为异常：
 
 | 机场 | 重建误差 | z-score | 判定 |
 |------|----------|---------|------|
@@ -142,7 +165,27 @@ LLM 判断是否需要工具
 | ZSPD | 526.5 | +2.4 | 异常 |
 | ZGGG | 758.7 | +5.2 | 异常 |
 
-改进方向：多机场训练（每机场独立模型，或归一化后混合训练）。
+改进方向：每机场独立建模，或归一化后混合训练。
+
+**LSTM 与计划表功能重叠**：计划时刻表提前一周可知，LSTM 纯时序外推的独立价值有限。改进方向：将计划时刻表、气象预报、节假日标记作为额外特征拼入 LSTM 输入，模型从"纯时序外推"转变为"已知信息基础上的偏差修正"。
+
+### 3.4 实验验证设计（待实施）
+
+当前缺乏严格的模型验证。拟加入以下实验：
+
+**合成异常回测**：在 `data_generator.py` 中插入已知异常事件（如第 180-185 天插入 6 小时"雷暴导致流量断崖"），用 Autoencoder 回测，验证：
+- 异常事件发生时 z-score 是否标红（检出率）
+- 正常时段误报率
+- 异常持续时段与 z-score 超过阈值时段的吻合度
+
+### 3.5 改进路线图
+
+| 优先级 | 改进项 | 说明 |
+|--------|--------|------|
+| P1 | 合成异常回测验证 | 用可控合成数据验证 Autoencoder 检出能力 |
+| P1 | 多机场独立模型 | 每机场训练独立 Autoencoder，消除跨机场泛化误差 |
+| P2 | LSTM 输入加特征 | 计划表、气象、节假日标记作为额外特征 |
+| P2 | 历史异常事件回测 | 拿真实运营中已知的不正常事件做验证 |
 
 ---
 
@@ -150,8 +193,7 @@ LLM 判断是否需要工具
 
 ### 4.1 当前实现 (Chainlit 2.11)
 
-单页 Agent 对话，启动时必须加载 Agent（含 LLM + 工具），
-启动时输出欢迎消息。
+单页 Agent 对话，启动时加载 Agent（含 LLM + 工具），输出欢迎消息。
 
 ```python
 @cl.on_chat_start  → 创建 Agent, 发欢迎消息
@@ -160,11 +202,9 @@ LLM 判断是否需要工具
 
 ### 4.2 当前状态
 
-Agent 模式，5 工具齐全，支持多轮对话记忆。RAG 检索通过 `search_regulations` 工具调用，已内嵌到 Agent 中，不需要独立模式。
+Agent 模式，5 工具齐全，支持多轮对话记忆。对话历史为进程内列表（`history`），每次请求全量发送给 LLM——Demo 阶段够用，生产需加入滑动窗口或摘要压缩。
 
 ### 4.3 主题配置
-
-Chainlit 2.11 通过 `custom_css` 挂载自定义主题，CSS 文件放在项目根 `public/` 目录。
 
 ```
 public/custom.css        ← DeepSeek 风格主题（唯一的主题文件）
@@ -178,8 +218,6 @@ public/custom.css        ← DeepSeek 风格主题（唯一的主题文件）
 | 字体 | Inter (正文) + SF Mono/Cascadia Code (代码) |
 | 输入框 | 圆角 8px，透明背景，focus 时亮色边框 |
 | 发送按钮 | 圆形透明，hover 半透明底色 |
-
-`public/` 是 Chainlit 唯一识别的前端静态文件目录，项目内不存在 `ui/public/` 或其他备用路径。
 
 ### 4.4 启动
 
@@ -214,6 +252,10 @@ curl -X POST http://localhost:8000/dl/anomaly \
   -d '{"airport": "ZUUU"}'
 ```
 
+### 5.3 与 Chainlit 的关系
+
+`server.py` 是可选独立模块。Chainlit 不依赖它启动，它存在的价值是：当其他系统（非对话场景）需要调用 Agent 或 DL 模型时，通过 REST API 访问，无需启动 Chainlit UI。
+
 ---
 
 ## 6. 数据模块 (core/config.py + core/data_generator.py)
@@ -232,9 +274,7 @@ curl -X POST http://localhost:8000/dl/anomaly \
 | `flights.csv` | `query_flights` 工具查询 |
 | `flow_history.csv` | `get_airport_flow` 工具查询 + DL 模型训练 |
 
-两个 DL 模型（LSTM、Autoencoder）**仅使用 ZUUU 的 8,760 小时数据训练**，
-其余 4 个机场（ZBAA、ZSPD、ZGGG、ZUUU2）仅用于工具查询，不参与训练。
-详见 §3.3。
+两个 DL 模型（LSTM、Autoencoder）**仅使用 ZUUU 的 8,760 小时数据训练**，其余 4 个机场（ZBAA、ZSPD、ZGGG、ZUUU2）仅用于工具查询。详见 §3.3。
 
 ### 6.3 CAAC 校准参数
 
